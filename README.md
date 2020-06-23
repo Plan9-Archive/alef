@@ -6,8 +6,8 @@ This is a mirror of the work-in-progress port of the Alef programming language t
 
 Upstream changes not yet commited an be found on the public grid griddisk at:
 
-	- `/burnzez/rep/alef/root`
-	- `/burnzez/alef`. 
+- `/burnzez/rep/alef/root`
+- `/burnzez/alef`. 
 
 Griddisk is accessible over 9p via `tcp!45.63.75.148!9564`. 
 
