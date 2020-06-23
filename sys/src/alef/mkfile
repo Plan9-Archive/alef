@@ -1,0 +1,16 @@
+</$objtype/mkfile
+
+DIRS=`{walk -fn2,2 | sed -n 's!/mkfile$!!p'}
+
+%.dirs:V:
+	for(i in $DIRS) @{
+		cd $i
+		echo mk $i
+		mk $MKFLAGS $stem
+	}
+
+all:V: all.dirs
+install:V: install.dirs
+installall:V: installall.dirs
+clean:V: clean.dirs
+nuke:V: clean.dirs

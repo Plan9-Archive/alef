@@ -1,0 +1,86 @@
+NPROC=1
+</$objtype/mkfile
+
+CPUS=mips 386 sparc power
+
+LIB=
+sysf=/sys/src/libc/9syscall/sys.h
+
+all:V:		$O
+install:V:	$O
+installall:V:
+	for (i in $CPUS) {
+		objtype = $i
+		mk install
+	}
+
+v k 8 q:V:
+	SYS=`{sed '/^#define._X[123]/d; s/#define.([A-Z0-9_]*).*/\1/' $sysf}
+	for(I in $SYS) {
+		i=`{echo $I|tr A-Z a-z}
+		n=`{sed -n '/[ 	]'$I'[ 	]/s/.*	//p' $sysf}
+		if(~ $i exits nsec) i=_$i
+#		if(~ $i exec) i=_exec
+		{switch($objtype){
+		case mips
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW R1, '0(FP)'
+			echo MOVW '$'$n, R1
+			echo SYSCALL
+			if(~ $i (seek _nsec)) {
+				echo 'MOVW $-1,R5
+				BNE R1,R5,4(PC)
+				MOVW a+0(FP),R5
+				MOVW R1,0(R5)
+				MOVW R1,4(R5)'
+			}
+			echo RET
+		case 386
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVL '$'$n, AX
+			echo INT '$'64
+			if(~ $i (seek _nsec)) {
+				echo 'CMPL AX,$-1
+				JNE 4(PC)
+				MOVL a+0(FP),CX
+				MOVL AX,0(CX)
+				MOVL AX,4(CX)'
+			}
+			echo RET
+		case sparc
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW R7, '0(FP)'
+			echo MOVW '$'$n, R7
+			echo TA R0
+			if(~ $i (seek _nsec)) {
+				echo 'CMP R7,$-1
+				BNE 4(PC)
+				MOVW a+0(FP),R8
+				MOVW R7,0(R8)
+				MOVW R7,4(R8)'
+			}
+			echo RETURN
+		case power
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW R3, '0(FP)'
+			echo MOVW '$'$n, R3
+			echo SYSCALL
+			if(~ $i (seek _nsec)) {
+				echo 'CMP R3,$-1
+				BNE 4(PC)
+				MOVW a+0(FP),R8
+				MOVW R3,0(R8)
+				MOVW R3,4(R8)'
+			}
+			echo RETURN
+		}} > $i.s
+		$AS $i.s
+	}
+	ar vu /$objtype/lib/alef/libA.a *.$O
+	rm -f *.$O *.s
+
+clean nuke:V:
+	rm -f *.[$OS] *.s
+
+installall:V:
+	for(objtype in $CPUS) mk install

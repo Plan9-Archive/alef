@@ -1,0 +1,37 @@
+</$objtype/mkfile
+
+LIB=/$objtype/lib/alef/libA.a
+
+RTFILES=\
+	alef.l\
+	chan.l\
+	exec.l\
+	par.l\
+	proc.l\
+	recv.l\
+	recvflt.l\
+	recvmem.l\
+	rendez.l\
+	sched.l\
+	select.l\
+	send.l\
+	sendflt.l\
+	sendmem.l\
+	task.l\
+
+OFILES=\
+	${AFILES:%.l=%.$O}\
+	${RTFILES:%.l=%.$O}\
+	${SFILES:%.s=%.$O}\
+
+</sys/src/cmd/mklib
+CFLAGS=-w -I../$objtype
+
+(.*)\.[vk8q]'$':R:	../rt/\1.l
+	$ALEF $ALFLAGS ../rt/$stem1.l
+
+installall:V:
+	mk install
+
+%.all:V:
+	mk $stem

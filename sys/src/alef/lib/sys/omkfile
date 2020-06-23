@@ -1,0 +1,55 @@
+NPROC=1
+</$objtype/mkfile
+
+CPUS=mips 386 sparc power
+
+LIB=
+sysf=/sys/src/libc/9syscall/sys.h
+
+all:V:		$O
+install:V:	$O
+installall:V:
+	for (i in $CPUS) {
+		objtype = $i
+		mk install
+	}
+
+v k 8 q:V:
+	SYS=`{sed 's/#define.([A-Z0-9_]*).*/\1/' $sysf}
+	for(I in $SYS) {
+		i=`{echo $I|tr A-Z a-z}
+		n=`{sed -n '/[ 	]'$I'[ 	]/s/.*	//p' $sysf}
+		if(~ $i exits) i=_exits
+		if(~ $i exec) i=_exec
+		{switch($objtype){
+		case mips
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW '$'$n, R1
+			echo SYSCALL
+			echo RET
+		case sparc
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW '$'$n, R7
+			echo TA R0
+			echo RETURN
+		case 386
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVL '$'$n, AX
+			echo INT '$'64
+			echo RET
+		case power
+			echo TEXT $i'(SB)', 1, '$0'
+			echo MOVW '$'$n, R3
+			echo SYSCALL
+			echo RETURN
+		}} > $i.s
+		$AS $i.s
+	}
+	ar vu /$objtype/lib/alef/libA.a *.$O
+	rm -f *.$O *.s
+
+clean nuke:V:
+	rm -f *.[$OS] *.s
+
+installall:V:
+	for(objtype in $CPUS) mk install

@@ -1,0 +1,96 @@
+diff -r b620d8b4b4de 386/mkfile
+--- a/386/mkfile	Tue Jan 15 00:22:01 2019 +0000
++++ b/386/mkfile	Sat Jan 19 14:08:08 2019 +0000
+@@ -1,6 +1,7 @@
+ </sys/src/mkfile.proto
+ 
+ CC=8c
++ALEF=8al
+ LD=8l
+ O=8
+ AS=8a
+diff -r b620d8b4b4de mips/mkfile
+--- a/mips/mkfile	Tue Jan 15 00:22:01 2019 +0000
++++ b/mips/mkfile	Sat Jan 19 14:08:08 2019 +0000
+@@ -1,6 +1,7 @@
+ </sys/src/mkfile.proto
+ 
+ CC=vc
++ALEF=val
+ LD=vl
+ O=v
+ AS=va
+diff -r b620d8b4b4de sparc/mkfile
+--- a/sparc/mkfile	Tue Jan 15 00:22:01 2019 +0000
++++ b/sparc/mkfile	Sat Jan 19 14:08:08 2019 +0000
+@@ -1,6 +1,7 @@
+ </sys/src/mkfile.proto
+ 
+ CC=kc
++ALEF=kal
+ LD=kl
+ O=k
+ RL=rl
+diff -r b620d8b4b4de sys/src/cmd/mklib
+--- a/sys/src/cmd/mklib	Tue Jan 15 00:22:01 2019 +0000
++++ b/sys/src/cmd/mklib	Sat Jan 19 14:09:09 2019 +0000
+@@ -19,6 +19,9 @@
+ %.$O:	%.s
+ 	$AS $AFLAGS $stem.s
+ 
++(.*)\.[vk8q]'$':R:	\1.l
++	$ALEF $ALFLAGS $stem1.l
++
+ y.tab.h y.tab.c:	$YFILES
+ 	yacc $YFLAGS $prereq
+ 
+diff -r b620d8b4b4de sys/src/cmd/mkmany
+--- a/sys/src/cmd/mkmany	Tue Jan 15 00:22:01 2019 +0000
++++ b/sys/src/cmd/mkmany	Sat Jan 19 14:09:09 2019 +0000
+@@ -19,6 +19,12 @@
+ %.$O:	%.s
+ 	$AS $AFLAGS $stem.s
+ 
++(.*)\.[vk8q]'$':R:	\1.l
++	$ALEF $ALFLAGS $stem1.l
++
+ y.tab.h y.tab.c:	$YFILES
+ 	$YACC $YFLAGS $prereq
+ 
+diff -r b620d8b4b4de sys/src/cmd/mkone
+--- a/sys/src/cmd/mkone	Tue Jan 15 00:22:01 2019 +0000
++++ b/sys/src/cmd/mkone	Sat Jan 19 14:09:09 2019 +0000
+@@ -17,6 +17,9 @@
+ %.$O:	%.s
+ 	$AS $AFLAGS $stem.s
+ 
++(.*)\.[vk8q]'$':R:	\1.l
++	$ALEF $ALFLAGS $stem1.l
++
+ y.tab.h y.tab.c:D:	$YFILES
+ 	$YACC $YFLAGS $prereq
+ 
+diff -r b620d8b4b4de sys/src/cmd/mksyslib
+--- a/sys/src/cmd/mksyslib	Tue Jan 15 00:22:01 2019 +0000
++++ b/sys/src/cmd/mksyslib	Sat Jan 19 14:09:09 2019 +0000
+@@ -16,6 +16,9 @@
+ %.$O:	%.s
+ 	$AS $AFLAGS $stem.s
+ 
++(.*)\.[vk8q]'$':R:	\1.l
++	$ALEF $ALFLAGS $stem1.l
++
+ install:V: $LIB
+ 
+ installall:V:
+diff -r b620d8b4b4de sys/src/mkfile.proto
+--- a/sys/src/mkfile.proto	Tue Jan 15 00:22:01 2019 +0000
++++ b/sys/src/mkfile.proto	Sat Jan 19 14:13:25 2019 +0000
+@@ -5,6 +5,7 @@
+ OS=0568qv
+ CPUS=spim arm amd64 386 power mips
+ CFLAGS=-FTVw
++AFLAGS=-w
+ LEX=lex
+ YACC=yacc
+ MK=/bin/mk
